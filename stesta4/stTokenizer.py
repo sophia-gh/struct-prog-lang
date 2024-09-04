@@ -22,7 +22,7 @@ for pattern in patterns:
 
 #tokenize takes a string checks if it matches a pattern in patterns, adds that coresponding tag
 #what does it return??
-#still unclear?? :(
+#still unclear?? :( look at notes 
 def tokenize(characters):
     tokens = []
     position = 0
