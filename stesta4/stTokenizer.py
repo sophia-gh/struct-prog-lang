@@ -45,6 +45,12 @@ def tokenize(characters):
                 token["value"] = float(token["value"])
             else:
                 token["value"] = int(token["value"])
+    token = {
+        "tag" : None, 
+        "value": None, 
+        "position": None
+    }
+    tokens.append(token)
     return tokens
 
 #sideways tdd, test functions
