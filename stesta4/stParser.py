@@ -38,12 +38,10 @@ def parse_term(tokens):
     term = factor { "*"|"/" factor }
     """
     node, tokens = parse_factor(tokens)
-    while tokens[0]["tag"] in ["*", "/"]:
+    while tokens and tokens[0]["tag"] in ["*", "/"]:    #does not attempt to run when tokens is empty
         tag = tokens[0]["tag"]
         right_node, tokens = parse_factor(tokens[1:])
-        node = {"tag": tag, "left": node, "right": right_node}
-        if not tokens:
-            break  #if tokens is empty then at end of expression 
+        node = {"tag": tag, "left": node, "right": right_node} 
     return node, tokens
 
 def parse_expression(tokens):
@@ -51,12 +49,10 @@ def parse_expression(tokens):
     expression = term { "+"|"-" term }
     """
     node, tokens = parse_term(tokens)
-    while tokens[0]["tag"] in ["+", "-"]:
+    while tokens and tokens[0]["tag"] in ["+", "-"]:   #does not attempt to run when tokens is empty
         tag = tokens[0]["tag"]
         right_node, tokens = parse_term(tokens[1:])
         node = {"tag": tag, "left": node, "right": right_node}
-        if not tokens:
-            break  #if tokens is empty then at end of expression
     return node, tokens
 
 #test functions ---------------------------------------------------------------------------------------------------
@@ -64,7 +60,22 @@ def test_parse_expression():
     """
     expression = term { "+"|"-" term }
     """
-    pass
+    print("testing parse expression")
+    node, tokens = parse_expression(tokenize("7+8"))
+    assert node == {
+        'tag': '+', 
+        'left': {'tag': 'number', 'value': 7, 'position': 0}, 
+        'right': {'tag': 'number', 'value': 8, 'position': 2}
+    }
+    node, tokens = parse_expression(tokenize("8+9-10"))
+    assert node == {
+        'tag': '-', 
+        'left': {'tag': '+', 'left': {'tag': 'number', 'value': 8, 'position': 0}, 'right': {'tag': 'number', 'value': 9, 'position': 2}}, 
+        'right': {'tag': 'number', 'value': 10, 'position': 4}
+    }
+    print("done.")
+    
+        
 
 def test_parse_term():
     """
@@ -77,9 +88,9 @@ def test_parse_term():
         'left': {'tag': 'number', 'value': 7, 'position': 0}, 
         'right': {'tag': 'number', 'value': 2, 'position': 2}
     }
-    node, tokens = parse_term(tokenize("8*3*7"))
+    node, tokens = parse_term(tokenize("8*3/7"))
     assert node == {
-        'tag': '*', 
+        'tag': '/', 
         'left': {'tag': '*', 
                  'left': {'tag': 'number', 'value': 8, 'position': 0}, 
                  'right': {'tag': 'number', 'value': 3, 'position': 2}}, 
@@ -126,6 +137,9 @@ if __name__ == "__main__":
     test_parse_simple_expression()
     test_parse_factor()
     test_parse_term()
+    test_parse_expression()
+   
+
     
     
 
