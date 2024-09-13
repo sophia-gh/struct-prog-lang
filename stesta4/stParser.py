@@ -73,11 +73,47 @@ def parse(tokens):
 
 
 # test functions ---------------------------------------------------------------------------------------------------
+def test_parse_simple_expression():
+    """
+    simple_expression = number | "("expression")" | "-" simple_expression
+    """
+    print(f"\033[38;5;43m{"testing simple expressions"}\033[0m")
+    tokens = tokenize("2")
+    ast, tokens = parse_simple_expression(tokens)
+    assert ast["tag"] == "number"
+    assert ast["value"] == 2
+    tokens = tokenize("(2)")
+    ast, tokens = parse_simple_expression(tokens)
+    assert ast["tag"] == "number"
+    assert ast["value"] == 2
+    tokens = tokenize("-2")
+    ast, tokens = parse_simple_expression(tokens)
+    assert ast == {
+        "tag": "negate",
+        "value": {"tag": "number", "value": 2, "position": 1},
+    }
+    tokens = tokenize("-(2)")
+    ast, tokens = parse_simple_expression(tokens)
+    assert ast == {
+        "tag": "negate",
+        "value": {"tag": "number", "value": 2, "position": 2},
+    }
+
+    #new test case for hw 1
+    tokens = tokenize("(-(4))")
+    ast, tokens = parse_simple_expression(tokens)
+    assert ast == {
+        'tag': 'negate', 
+        'value': {'position': 3, 'tag': 'number', 'value': 4}
+    }
+    print(f"\033[38;5;117m{"done."}\033[0m")
+
+
 def test_parse_expression():
     """
     expression = term { "+"|"-" term }
     """
-    print("testing parse expression")
+    print(f"\033[38;5;43m{"testing parse expression"}\033[0m")
     node, tokens = parse_expression(tokenize("7+8"))
     assert node == {
         "tag": "+",
@@ -108,14 +144,28 @@ def test_parse_expression():
         },
         "tag": "+",
     }
-    print("done.")
+    print(f"\033[38;5;117m{"done."}\033[0m")
+
+
+def test_parse_factor():
+    """
+    factor = simple_expression
+    """
+    print(f"\033[38;5;43m{"testing parse factors"}\033[0m")
+    for s in ["2", "(2)", "-2"]:
+        assert parse_factor(tokenize(s)) == parse_simple_expression(tokenize(s))
+    
+    #new test cases for hw 1
+    for s in ["-(-4)", "4(4)", "-4(-4)"]:
+        assert parse_factor(tokenize(s)) == parse_simple_expression(tokenize(s))
+    print(f"\033[38;5;117m{"done."}\033[0m")
 
 
 def test_parse_term():
     """
     term = factor { "*"|"/" factor }
     """
-    print("testing parse term")
+    print(f"\033[38;5;43m{"testing parse term"}\033[0m")
     node, tokens = parse_term(tokenize("7*2"))
     assert node == {
         "tag": "*",
@@ -132,55 +182,18 @@ def test_parse_term():
         },
         "right": {"tag": "number", "value": 7, "position": 4},
     }
-    print("done.")
-
-
-def test_parse_factor():
-    """
-    factor = simple_expression
-    """
-    print("testing factors")
-    for s in ["2", "(2)", "-2"]:
-        assert parse_factor(tokenize(s)) == parse_simple_expression(tokenize(s))
-    print("done")
-
-
-def test_parse_simple_expression():
-    """
-    simple_expression = number | "("expression")" | "-" simple_expression
-    """
-    print("testing simple expressions")
-    tokens = tokenize("2")
-    ast, tokens = parse_simple_expression(tokens)
-    assert ast["tag"] == "number"
-    assert ast["value"] == 2
-    tokens = tokenize("(2)")
-    ast, tokens = parse_simple_expression(tokens)
-    assert ast["tag"] == "number"
-    assert ast["value"] == 2
-    tokens = tokenize("-2")
-    ast, tokens = parse_simple_expression(tokens)
-    assert ast == {
-        "tag": "negate",
-        "value": {"tag": "number", "value": 2, "position": 1},
-    }
-    tokens = tokenize("-(2)")
-    ast, tokens = parse_simple_expression(tokens)
-    assert ast == {
-        "tag": "negate",
-        "value": {"tag": "number", "value": 2, "position": 2},
-    }
-    print("done.")
+    print(f"\033[38;5;117m{"done."}\033[0m")
 
 
 def test_parse():
-    print("testing parse")
+    print(f"\033[38;5;43m{"testing parse"}\033[0m")
     tokens = tokenize("2+3+4/6")
     assert parse(tokens) == parse_expression(tokens)
-    print("done")
+    print(f"\033[38;5;117m{"done."}\033[0m")
 
 
 if __name__ == "__main__":
+    print(f"\033[38;5;221m{"--Parser Test Cases--"}\033[0m")
     test_parse_simple_expression()
     test_parse_factor()
     test_parse_term()

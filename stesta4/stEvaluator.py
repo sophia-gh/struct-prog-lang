@@ -13,14 +13,14 @@ start = "\033[1;31m"
 end = "\033[0;0m"
 def equals(code, environment, expected_result, expected_environment=None):
     result, _ = evaluate(parse(tokenize(code)), environment)
-    assert (result == expected_result), f"""ERROR: when executing 
+    assert (result == expected_result), f"""\033[31m{"ERROR"}\033[0m: when executing 
     {[code]}
     -- expected -- 
     {[expected_result]}
     -- got -- 
     {[result]}."""
     if expected_environment:
-         assert (environment == expected_environment), f""" ERROR: when executing 
+         assert (environment == expected_environment), f"""\033[31m{"ERROR"}\033[0m: when executing 
     {[code]}
     -- expected -- 
     {[expected_environment]}
