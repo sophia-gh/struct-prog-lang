@@ -56,8 +56,8 @@ def tokenize(characters):
 #sideways tdd, test functions
 def test_simple_tokens():
     print("testing simple tokens") 
-    assert tokenize("+") == [{'tag': '+', 'value': '+', 'position': 0}]
-    assert tokenize("-") == [{'tag': '-', 'value': '-', 'position': 0}]
+    assert tokenize("+") == [{'tag': '+', 'value': '+', 'position': 0}, {'tag': None, 'value': None, 'position': None}]
+    assert tokenize("-") == [{'tag': '-', 'value': '-', 'position': 0}, {'tag': None, 'value': None, 'position': None}]
     i = 0
     for char in "+-*/()":
         tokens = tokenize(char)

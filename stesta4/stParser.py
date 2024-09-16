@@ -21,9 +21,9 @@ def parse_simple_expression(tokens):
     if tokens[0]["tag"] == "number":
         return tokens[0], tokens[1:]
     if tokens[0]["tag"] == "(":
-        node, tokens = parse_simple_expression(tokens[1:])
-        assert tokens[0]["tag"] == ")", "error: expected ')'"
-        return node, tokens
+        node, tokens = parse_expression(tokens[1:])
+        assert tokens[0]["tag"] == ")", "Error: expected ')'"
+        return node, tokens[1:]
     if tokens[0]["tag"] == "-":
         node, tokens = parse_simple_expression(tokens[1:])
         node = {"tag": "negate", "value": node}
@@ -69,7 +69,8 @@ def parse_expression(tokens):
 
 
 def parse(tokens):
-    return parse_expression(tokens)
+    ast, tokens = parse_expression(tokens)
+    return ast
 
 
 # test functions ---------------------------------------------------------------------------------------------------
@@ -106,7 +107,6 @@ def test_parse_simple_expression():
         'tag': 'negate', 
         'value': {'position': 3, 'tag': 'number', 'value': 4}
     }
-    print(f"\033[38;5;117m{"done."}\033[0m")
 
 
 def test_parse_expression():
@@ -144,7 +144,6 @@ def test_parse_expression():
         },
         "tag": "+",
     }
-    print(f"\033[38;5;117m{"done."}\033[0m")
 
 
 def test_parse_factor():
@@ -158,7 +157,6 @@ def test_parse_factor():
     #new test cases for hw 1
     for s in ["-(-4)", "4(4)", "-4(-4)"]:
         assert parse_factor(tokenize(s)) == parse_simple_expression(tokenize(s))
-    print(f"\033[38;5;117m{"done."}\033[0m")
 
 
 def test_parse_term():
@@ -182,14 +180,13 @@ def test_parse_term():
         },
         "right": {"tag": "number", "value": 7, "position": 4},
     }
-    print(f"\033[38;5;117m{"done."}\033[0m")
 
 
 def test_parse():
     print(f"\033[38;5;43m{"testing parse"}\033[0m")
     tokens = tokenize("2+3+4/6")
-    assert parse(tokens) == parse_expression(tokens)
-    print(f"\033[38;5;117m{"done."}\033[0m")
+    ast, _ = parse_expression(tokens)
+    assert parse(tokens) == ast
 
 
 if __name__ == "__main__":
@@ -200,6 +197,7 @@ if __name__ == "__main__":
     test_parse_expression()
     test_parse()
     parse(tokenize("4"))
+    print(f"\033[38;5;117m{"done."}\033[0m")
 
 
 # tokens is never populated by the parse_simple_expression() function
