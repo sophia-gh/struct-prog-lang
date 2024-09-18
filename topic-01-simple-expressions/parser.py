@@ -171,12 +171,14 @@ def test_parse_expression():
     }
 
 def parse(tokens):
-    return parse_expression(tokens)
+    ast, tokens = parse_expression(tokens)
+    return ast 
 
 def test_parse():
     print("testing parse")
     tokens = tokenize("2+3*4+5")
-    assert parse(tokens) == parse_expression(tokens)
+    ast, _ = parse_expression(tokens)
+    assert parse(tokens) == ast
 
 if __name__ == "__main__":
     test_parse_simple_expression()
