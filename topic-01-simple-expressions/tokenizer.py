@@ -13,7 +13,15 @@ patterns = [
     ["\\-", "-"],
     ["\\*", "*"],
     ["\\/", "/"],
+    ["==", "=="],
+    ["!=", "!="],
+    ["<=", "<="],
+    [">=", ">="],
+    ["<", "<"],
+    [">", ">"],
+    ["=", "="],
     ["(\\d+\\.\\d*)|(\\d*\\.\\d+)|(\\d+)", "number"],
+    ["and", "and"],["or", "or"],["not","not"]
 ]
 
 for pattern in patterns:
@@ -28,7 +36,7 @@ def tokenize(characters):
             match = pattern.match(characters, position)
             if match:
                 break
-        assert match
+        assert match, f"Did not find a match for {characters[position:]}"
         token = {
             "tag": tag,
             "value": match.group(0),
@@ -61,9 +69,11 @@ def test_simple_tokens():
         assert tokens[0]["tag"] == char
         assert tokens[0]["value"] == char
         assert tokens[0]["position"] == i
-    for characters in ["+", "-"]:
+    for characters in ["(",")","+", "-", "*", "/", "==","!=","<",">","<=", ">=","=","or","and"]:
         tokens = tokenize(characters)
-        assert tokens[0]["tag"] == characters
+        assert (
+            tokens[0]["tag"] == characters
+        ), f"Expecting {characters}, got {tokens[0]["tag"]}"
         assert tokens[0]["value"] == characters
     for number in ["123.45", "1.", ".1", "123"]:
         tokens = tokenize(number)
