@@ -12,9 +12,17 @@ patterns = [
     ["\\-", "-"], #if encounter a 'minus' token, produce a minus
     ["\\*", "*"], 
     ["\\/", "/"],
-    [
-        "(\\d+\\.\\d*)|(\\d*\\.\\d+)|(\\d+)","number"
-    ], #describing floating point number, syntax of regular expressions
+    ["==", "=="],
+    ["!=", "!="],
+    [">=", ">="],
+    ["<=", "<="],
+    ["<", "<"],
+    [">", ">"],
+    ["=", "="],
+    ["(\\d+\\.\\d*)|(\\d*\\.\\d+)|(\\d+)","number"], #describing floating point number, syntax of regular expressions
+    ["or", "or"],
+    ["and", "and"],
+    ["not", "not"],
 ]
 
 for pattern in patterns:
@@ -31,7 +39,7 @@ def tokenize(characters):
             match = pattern.match(characters, position) #if reg expression matches characters starting at position, match = true
             if match:
                 break
-        assert match
+        assert match, f"did not find match for {characters[position:]}"
         token = {
             'tag':tag,
             'value': match.group(0), #tokens can sometimes match multiple times, go with smallest group
@@ -64,7 +72,7 @@ def test_simple_tokens():
         assert tokens[0]['tag'] == char
         assert tokens[0]['value'] == char
         assert tokens[0]['position'] == i
-    for char in ["+", "++", "-"]:
+    for char in ["(", ")","+", "++", "-", "*", "/", "==", "!=", "<",">", "<=", ">=","=", "or", "and"]:
         tokens = tokenize(char)
         assert tokens[0]['tag'] == char
         assert tokens[0]['value'] == char
