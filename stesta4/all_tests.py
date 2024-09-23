@@ -21,4 +21,4 @@ if __name__ == "__main__":
     test_evaluate_multiplication()
     test_evaluate_division()
     test_evaluate_negate()
-    print(f"\033[38;5;117m{"done."}\033[0m")
+    print(f"\033[38;5;117m{" all done."}\033[0m")
