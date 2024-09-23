@@ -19,10 +19,18 @@ patterns = [
     ["<", "<"],
     [">", ">"],
     ["=", "="],
-    ["(\\d+\\.\\d*)|(\\d*\\.\\d+)|(\\d+)","number"], #describing floating point number, syntax of regular expressions
     ["or", "or"],
     ["and", "and"],
     ["not", "not"],
+    ["print", "print"],
+    ["while", "while"],
+    ["do", "do"],
+    ["if", "if"],
+    ["else", "else"],
+    ["function", "function"],
+    ["return", "return"],
+    ["(\\d+\\.\\d*)|(\\d*\\.\\d+)|(\\d+)","number"], #describing floating point number, syntax of regular expressions
+    ["\\&\\&", "&&"], ["\\|\\|", "||"], ["\\!", "!"],
 ]
 
 for pattern in patterns:
@@ -72,7 +80,7 @@ def test_simple_tokens():
         assert tokens[0]['tag'] == char
         assert tokens[0]['value'] == char
         assert tokens[0]['position'] == i
-    for char in ["(", ")","+", "++", "-", "*", "/", "==", "!=", "<",">", "<=", ">=","=", "or", "and"]:
+    for char in ["(", ")","+", "++", "-", "*", "/", "==", "!=", "<",">", "<=", ">=","=", "||", "&&", "!", "print"]:
         tokens = tokenize(char)
         assert tokens[0]['tag'] == char
         assert tokens[0]['value'] == char

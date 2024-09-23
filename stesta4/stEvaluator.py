@@ -21,9 +21,51 @@ def evaluate(ast, environment):
         left_value, _ = evaluate(ast['left'], environment)
         right_value, _ = evaluate(ast['right'], environment)
         return left_value / right_value, False
+    if ast['tag'] == "&&":
+        left_value, _ = evaluate(ast['left'], environment)
+        right_value, _ = evaluate(ast['right'], environment)
+        return left_value and right_value, False
+    if ast['tag'] == "||":
+        left_value, _ = evaluate(ast['left'], environment)
+        right_value, _ = evaluate(ast['right'], environment)
+        return left_value or right_value, False
+    if ast['tag'] == "<":
+        left_value, _ = evaluate(ast['left'], environment)
+        right_value, _ = evaluate(ast['right'], environment)
+        return left_value < right_value, False
+    if ast['tag'] == ">":
+        left_value, _ = evaluate(ast['left'], environment)
+        right_value, _ = evaluate(ast['right'], environment)
+        return left_value > right_value, False
+    if ast['tag'] == ">=":
+        left_value, _ = evaluate(ast['left'], environment)
+        right_value, _ = evaluate(ast['right'], environment)
+        return left_value >= right_value, False
+    if ast['tag'] == "<=":
+        left_value, _ = evaluate(ast['left'], environment)
+        right_value, _ = evaluate(ast['right'], environment)
+        return left_value <= right_value, False
+    if ast['tag'] == "==":
+        left_value, _ = evaluate(ast['left'], environment)
+        right_value, _ = evaluate(ast['right'], environment)
+        return left_value == right_value, False
+    if ast['tag'] == "!=":
+        left_value, _ = evaluate(ast['left'], environment)
+        right_value, _ = evaluate(ast['right'], environment)
+        return left_value != right_value, False
+    if ast['tag'] == "print":
+        if ast["value"]:
+            value, _ = evaluate(ast["value"], environment)
+            print(value)
+        else: 
+            print
+        return None, False
     if ast['tag'] == "negate":
         value, _ = evaluate(ast['value'], environment)
         return -value, False
+    if ast['tag'] == "!":
+        value, _ = evaluate(ast['value'], environment)
+        return not value, False
     assert False, "Unknown Operator in AST"
 
 #tests---------------------------------------------------------------
@@ -60,6 +102,11 @@ def test_evaluate_negate():
     print("\033[38;5;200m--test evaluate negate--\033[0m")
     equals("-3", {}, -3, {})
     equals("-8+1", {}, -7, {})
+
+def test_evaluate_print():
+    print("\033[38;5;200m--test evaluate print--\033[0m")
+    equals("print()", {}, None, {})
+    equals("print(50+7)", {}, None, {})
     
 
 def equals(code, environment, expected_result, expected_environment=None):
@@ -86,4 +133,5 @@ if __name__ == "__main__":
     test_evaluate_multiplication()
     test_evaluate_division()
     test_evaluate_negate()
+    test_evaluate_print()
     print("\033[38;5;76mdone.\033[0m")
