@@ -30,6 +30,7 @@ patterns = [
     ["function", "function"],
     ["return", "return"],
     ["(\\d+\\.\\d*)|(\\d*\\.\\d+)|(\\d+)","number"], #describing floating point number, syntax of regular expressions
+    ["[A-Za-z][A-Za-z0-9]*","identifier"],
     ["\\&\\&", "&&"], ["\\|\\|", "||"], ["\\!", "!"],
 ]
 
@@ -68,7 +69,7 @@ def tokenize(characters):
     tokens.append(token)
     return tokens
 
-#sideways tdd, test functions
+#tests-----------------------------------------------------------------------------------------------------------------------------------------
 def test_simple_tokens():
     print("testing simple tokens") 
     assert tokenize("+") == [{'tag': '+', 'value': '+', 'position': 0}, {'tag': None, 'value': None, 'position': None}]
@@ -84,15 +85,10 @@ def test_simple_tokens():
         assert tokens[0]['tag'] == char
         assert tokens[0]['value'] == char
         assert tokens[0]['position'] == i
-
     for number in ["123.45", "1.", ".1", "123"]:
         tokens = tokenize(number)
         assert tokens[0]["tag"] == "number"
         assert tokens[0]["value"] == float(number) 
-
-def test_identifier_tokens():
-    pass # copy from topic 3 delozier 
-        
 
 if __name__ == "__main__":
     test_simple_tokens()
