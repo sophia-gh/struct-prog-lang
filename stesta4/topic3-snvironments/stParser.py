@@ -5,7 +5,7 @@ Accept a string of tokens, return an AST expressed as a stack of dictionaries
 """
 
 """
-    simple_expression = number | "("expression")" | "-" simple_expression
+    simple_expression = number | identifer | "("expression")" | "-" simple_expression
     factor = simple_expression
     term = factor {"*"|"/" factor}
     arithmetic_expression = term { "+"|"-" term }
@@ -25,10 +25,12 @@ from pprint import pprint
 
 def parse_simple_expression(tokens):
     """
-    simple_expression = number | "("expression")" | "-" simple_expression
+    simple_expression = number | identifier | "("expression")" | "-" simple_expression
     """
     if tokens[0]["tag"] == "number":
         return tokens[0], tokens[1:]
+    if tokens[0]["tag"] == "identifer":
+        pass # copy from topic 3 delozier
     if tokens[0]["tag"] == "(":
         node, tokens = parse_arithmetic_expression(tokens[1:])
         assert tokens[0]["tag"] == ")", "Error: expected ')'"
@@ -400,4 +402,4 @@ if __name__ == "__main__":
     print(f"\033[38;5;117m{"done."}\033[0m")
 
 
-# copy over parse assignment and parse expression functions and tests from topic 2
+# tokens is never populated by the parse_simple_expression() function
