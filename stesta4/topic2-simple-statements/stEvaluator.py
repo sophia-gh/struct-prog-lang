@@ -103,13 +103,12 @@ def test_evaluate_negate():
     equals("-3", {}, -3, {})
     equals("-8+1", {}, -7, {})
 
-def test_evaluate_print():
-    print("\033[38;5;200m--test evaluate print--\033[0m")
+def test_evaluate_print_statement():
+    print("test print statement")
+    equals("print(77)", {}, None, {})
     equals("print()", {}, None, {})
     equals("print(50+7)", {}, None, {})
-    equals("print()", {}, None, {})
-    equals("print(30+7)", {}, None, {})
-    equals("print(40+7)", {}, None, {})
+    equals("print(50+8)", {}, None, {})
     
 
 def equals(code, environment, expected_result, expected_environment=None):
@@ -136,5 +135,5 @@ if __name__ == "__main__":
     test_evaluate_multiplication()
     test_evaluate_division()
     test_evaluate_negate()
-    test_evaluate_print()
+    test_evaluate_print_statement()
     print("\033[38;5;76mdone.\033[0m")
