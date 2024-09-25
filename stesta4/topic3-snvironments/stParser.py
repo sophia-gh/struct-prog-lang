@@ -4,7 +4,7 @@ parser.py -- implement parser for simple expressions
 Accept a string of tokens, return an AST expressed as stack of dictionaries
 """
 """
-    simple_expression = number | "(" expression ")" | "-" simple_expression
+    simple_expression = number | identifier | "(" expression ")" | "-" simple_expression
     factor = simple_expression
     term = factor { "*"|"/" factor }
     arithmetic_expression = term { "+"|"-" term }
@@ -15,7 +15,6 @@ Accept a string of tokens, return an AST expressed as stack of dictionaries
     print_statement = "print" "(" expression ")"
     assignment_statement = expression
     statement = print_statement |
-                expression
                 assignment_expression
 """
 
@@ -43,6 +42,9 @@ def parse_simple_expression(tokens):
 #     return parse_simple_expression(tokens), tokens[1:]
 
 def parse_factor(tokens):
+    """
+    factor = simple_expression
+    """
     return parse_simple_expression(tokens)
 
 
@@ -51,10 +53,7 @@ def parse_term(tokens):
     term = factor { "*"|"/" factor }
     """
     node, tokens = parse_factor(tokens)
-    while tokens[0]["tag"] in [
-        "*",
-        "/",
-    ]:  # does not attempt to run when tokens is empty
+    while tokens[0]["tag"] in ["*","/",]:  # does not attempt to run when tokens is empty
         tag = tokens[0]["tag"]
         right_node, tokens = parse_factor(tokens[1:])
         node = {"tag": tag, "left": node, "right": right_node}
@@ -85,7 +84,7 @@ def parse_comparison_expression(tokens):
 
 def parse_boolean_term(tokens):
     """
-    boolean_term == comparison_expression { "&&" comparison_expression }
+    boolean_term == comparison_expression { "and" comparison_expression }
     """
     node, tokens = parse_comparison_expression(tokens)
     while tokens[0]["tag"] in ["&&"]:
@@ -105,7 +104,16 @@ def parse_boolean_expression(tokens):
         node = {"tag": tag, "left": node, "right": right_node}
     return node, tokens
 
+def parse_expression(tokens):
+    """
+    expression = boolean_expression
+    """
+    return parse_boolean_expression(tokens)
+
 def parse_print_statement(tokens):
+    """
+    print_statement = "print" "(" expression ")"
+    """
     assert tokens[0]["tag"] == "print"
     assert tokens[1]["tag"] == "("
     tokens = tokens[2:]
@@ -130,13 +138,6 @@ def parse_assignment_statement(tokens):
         value, tokens = parse_expression(tokens[1:])
         node = {"tag": tag, "target": node, "value": value}
     return node, tokens
-    
-def parse_expression(tokens):
-    """
-    expression = boolean_expression
-    """
-    return parse_boolean_expression(tokens)
-
 
 def parse_statement(tokens):
     """

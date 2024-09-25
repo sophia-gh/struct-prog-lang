@@ -5,23 +5,19 @@ break character stream into tokens, provide a token stream
 import re #syntax for regular expressions is universal, implementation is defined in this library 
 
 patterns = [
-    ["\\(", "("], 
+    ["\\(", "("],
     ["\\)", ")"],
-    ["\\+\\+", "++"],
-    ["\\+", "+"], #if encounter a 'plus' token, produce a plus
-    ["\\-", "-"], #if encounter a 'minus' token, produce a minus
-    ["\\*", "*"], 
+    ["\\+", "+"],
+    ["\\-", "-"],
+    ["\\*", "*"],
     ["\\/", "/"],
     ["==", "=="],
     ["!=", "!="],
-    [">=", ">="],
     ["<=", "<="],
+    [">=", ">="],
     ["<", "<"],
     [">", ">"],
     ["=", "="],
-    ["or", "or"],
-    ["and", "and"],
-    ["not", "not"],
     ["print", "print"],
     ["while", "while"],
     ["do", "do"],
@@ -29,9 +25,11 @@ patterns = [
     ["else", "else"],
     ["function", "function"],
     ["return", "return"],
-    ["(\\d+\\.\\d*)|(\\d*\\.\\d+)|(\\d+)","number"], #describing floating point number, syntax of regular expressions
-    ["[A-Za-z][A-Za-z0-9]*","identifier"],
-    ["\\&\\&", "&&"], ["\\|\\|", "||"], ["\\!", "!"],
+    ["(\\d+\\.\\d*)|(\\d*\\.\\d+)|(\\d+)", "number"],
+    ["[A-Za-z_][A-Za-z0-9_]*","identifier"],
+    ["\\&\\&", "&&"],
+    ["\\|\\|", "||"],
+    ["!", "!"],
 ]
 
 for pattern in patterns:
@@ -80,9 +78,9 @@ def test_simple_tokens():
         assert tokens[0]['tag'] == char
         assert tokens[0]['value'] == char
         assert tokens[0]['position'] == i
-    for char in ["(", ")","+", "++", "-", "*", "/", "==", "!=", "<",">", "<=", ">=","=", "||", "&&", "!", "print"]:
+    for char in ["(", ")","+", "-", "*", "/", "==", "!=", "<",">", "<=", ">=","=", "||", "&&", "!", "print"]:
         tokens = tokenize(char)
-        assert tokens[0]['tag'] == char
+        assert (tokens[0]["tag"] == char), f"Expecting {char}, got {tokens[0]["tag"]}"
         assert tokens[0]['value'] == char
         assert tokens[0]['position'] == i
     for number in ["123.45", "1.", ".1", "123"]:
@@ -90,7 +88,15 @@ def test_simple_tokens():
         assert tokens[0]["tag"] == "number"
         assert tokens[0]["value"] == float(number) 
 
+def test_identifier_tokens():
+    print("testing identifer tokens")
+    for s in ["x", "_", "X"]:
+        tokens = tokenize(s)
+        assert tokens[0]["tag"] == "identifier"
+        assert tokens[0]["value"] == s
+
 if __name__ == "__main__":
     test_simple_tokens()
+    test_identifier_tokens()
     print("done.")
 

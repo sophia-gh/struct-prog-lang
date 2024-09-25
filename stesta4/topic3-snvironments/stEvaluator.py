@@ -5,6 +5,12 @@ def evaluate(ast, environment):
     if ast["tag"] == "number":
         assert type(ast["value"]) in [float, int], f"unexpected numerical type {type(ast["value"])}"
         return ast["value"], False  #second value is return chain value (if not in return chain then false )
+    if ast["tag"] == "identifier":
+        #assert type(ast["value"]) in [
+        #    float,
+        #    int,
+        #], f"unexpected numerical type {type(ast["value"])}"
+        return 3.14159, False
     if ast['tag'] == "+":
         left_value, _ = evaluate(ast['left'], environment)
         right_value, _ = evaluate(ast['right'], environment)
@@ -68,6 +74,25 @@ def evaluate(ast, environment):
         return not value, False
     assert False, "Unknown Operator in AST"
 
+#helper function ---------------------------------------------------
+def equals(code, environment, expected_result, expected_environment=None):
+    result, _ = evaluate(parse(tokenize(code)), environment)
+    assert (result == expected_result), f"""\033[31m{"ERROR"}\033[0m: when executing 
+    {[code]}
+    -- expected -- 
+    {[expected_result]}
+    -- got -- 
+    {[result]}."""
+    if expected_environment != None:
+         assert (environment == expected_environment), f"""\033[31m{"ERROR"}\033[0m: when executing 
+        {[code]}
+        -- expected environment-- 
+        {[expected_environment]}
+        -- got -- 
+        {[environment]}."""
+
+
+
 #tests---------------------------------------------------------------
 def test_evaluate_single_value():
     print("\033[38;5;200m--test evaluate single value--\033[0m")
@@ -110,23 +135,6 @@ def test_evaluate_print_statement():
     equals("print(50+7)", {}, None, {})
     equals("print(50+8)", {}, None, {})
     
-
-def equals(code, environment, expected_result, expected_environment=None):
-    result, _ = evaluate(parse(tokenize(code)), environment)
-    assert (result == expected_result), f"""\033[31m{"ERROR"}\033[0m: when executing 
-    {[code]}
-    -- expected -- 
-    {[expected_result]}
-    -- got -- 
-    {[result]}."""
-    if expected_environment != None:
-         assert (environment == expected_environment), f"""\033[31m{"ERROR"}\033[0m: when executing 
-        {[code]}
-        -- expected environment-- 
-        {[expected_environment]}
-        -- got -- 
-        {[environment]}."""
-
 
 if __name__ == "__main__":
     test_evaluate_single_value()
