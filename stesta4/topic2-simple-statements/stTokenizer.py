@@ -69,7 +69,7 @@ def tokenize(characters):
     tokens.append(token)
     return tokens
 
-#sideways tdd, test functions
+#tests-----------------------------------------------------------------------------------------------------------------------------------------
 def test_simple_tokens():
     print("testing simple tokens") 
     assert tokenize("+") == [{'tag': '+', 'value': '+', 'position': 0}, {'tag': None, 'value': None, 'position': None}]
