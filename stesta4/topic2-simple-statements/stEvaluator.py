@@ -107,6 +107,9 @@ def test_evaluate_print():
     print("\033[38;5;200m--test evaluate print--\033[0m")
     equals("print()", {}, None, {})
     equals("print(50+7)", {}, None, {})
+    equals("print()", {}, None, {})
+    equals("print(30+7)", {}, None, {})
+    equals("print(40+7)", {}, None, {})
     
 
 def equals(code, environment, expected_result, expected_environment=None):

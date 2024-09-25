@@ -14,8 +14,9 @@ Accept a string of tokens, return an AST expressed as a stack of dictionaries
     boolean_expression = boolean_term { "or" boolean_term }
     expression = boolean_expression
     print_statement = "print "("expression")"
+    assignment_statement = expression
     statement = print_statement | 
-                expression
+                assignment_expression
 
 """
 from stTokenizer import tokenize
@@ -134,8 +135,36 @@ def test_parse_print_statement():
         'tag': 'print', 'value': None
         }
 
+def parse_assignment_statement(tokens):
+    """
+    assignment_statement = expression
+    """
+    node, tokens = parse_expression(tokens)
+    if tokens[0]["tag"] == "=":
+        tag = tokens[0]["tag"]
+        value, tokens = parse_expression(tokens[1:])
+        node = {"tag": tag, "target": node, "value": value}
+    return node, tokens
+
+def test_parse_assignment_statement():
+    print(f"\033[38;5;43m{"testing parse assignment statement"}\033[0m")
+    tokens = tokenize("2")
+    ast1, tokens1 = parse_expression(tokens)
+    ast2, tokens1 = parse_assignment_statement(tokens)
+    assert ast1 == ast2
+    tokens = tokenize("3=4")
+    node, tokens = parse(tokens)
+    print(node)
+    assert ast1 == ast2
+    
 def parse_expression(tokens):
     return parse_boolean_expression(tokens)
+
+def test_parse_expression():
+    print(f"\033[38;5;43m{"testing parse expression"}\033[0m")
+    ast1, tokens = parse_expression(tokenize("8+9-10"))
+    ast2, tokens = parse_boolean_expression(tokenize("8+9-10"))
+    assert ast1 == ast2
 
 def parse_statement(tokens):
     """statement = print_statement | 
@@ -363,6 +392,8 @@ if __name__ == "__main__":
     test_parse_comparison_expression()
     test_parse_boolean_term()
     test_parse_boolean_expression()
+    test_parse_assignment_statement()
+    test_parse_expression()
     test_parse_statment()
     test_parse_print_statement()
     test_parse()
