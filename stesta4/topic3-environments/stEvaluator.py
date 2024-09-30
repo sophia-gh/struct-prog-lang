@@ -3,76 +3,77 @@ from stParser import parse
 
 def evaluate(ast, environment):
     if ast["tag"] == "number":
-        assert type(ast["value"]) in [float, int], f"unexpected numerical type {type(ast["value"])}"
-        return ast["value"], False  #second value is return chain value (if not in return chain then false )
+        assert type(ast["value"]) in [float, int],f"unexpected numerical type {type(ast["value"])}"
+        return ast["value"], False
     if ast["tag"] == "identifier":
         #assert type(ast["value"]) in [
         #    float,
         #    int,
         #], f"unexpected numerical type {type(ast["value"])}"
         return 3.14159, False
-    if ast['tag'] == "+":
-        left_value, _ = evaluate(ast['left'], environment)
-        right_value, _ = evaluate(ast['right'], environment)
+    if ast["tag"] == "+":
+        left_value, _ = evaluate(ast["left"], environment)
+        right_value, _ = evaluate(ast["right"], environment)
         return left_value + right_value, False
-    if ast['tag'] == "-":
-        left_value, _ = evaluate(ast['left'], environment)
-        right_value, _ = evaluate(ast['right'], environment)
+    if ast["tag"] == "-":
+        left_value, _ = evaluate(ast["left"], environment)
+        right_value, _ = evaluate(ast["right"], environment)
         return left_value - right_value, False
-    if ast['tag'] == "*":
-        left_value, _ = evaluate(ast['left'], environment)
-        right_value, _ = evaluate(ast['right'], environment)
+    if ast["tag"] == "*":
+        left_value, _ = evaluate(ast["left"], environment)
+        right_value, _ = evaluate(ast["right"], environment)
         return left_value * right_value, False
-    if ast['tag'] == "/":
-        left_value, _ = evaluate(ast['left'], environment)
-        right_value, _ = evaluate(ast['right'], environment)
+    if ast["tag"] == "/":
+        left_value, _ = evaluate(ast["left"], environment)
+        right_value, _ = evaluate(ast["right"], environment)
+        assert right_value != 0, "Division by zero"
         return left_value / right_value, False
-    if ast['tag'] == "&&":
-        left_value, _ = evaluate(ast['left'], environment)
-        right_value, _ = evaluate(ast['right'], environment)
+    if ast["tag"] == "negate":
+        value, _ = evaluate(ast["value"], environment)
+        return -value, False
+    if ast["tag"] == "&&":
+        left_value, _ = evaluate(ast["left"], environment)
+        right_value, _ = evaluate(ast["right"], environment)
         return left_value and right_value, False
-    if ast['tag'] == "||":
-        left_value, _ = evaluate(ast['left'], environment)
-        right_value, _ = evaluate(ast['right'], environment)
+    if ast["tag"] == "||":
+        left_value, _ = evaluate(ast["left"], environment)
+        right_value, _ = evaluate(ast["right"], environment)
         return left_value or right_value, False
-    if ast['tag'] == "<":
-        left_value, _ = evaluate(ast['left'], environment)
-        right_value, _ = evaluate(ast['right'], environment)
+    if ast["tag"] == "!":
+        value, _ = evaluate(ast["value"], environment)
+        return not value, False
+    if ast["tag"] == "<":
+        left_value, _ = evaluate(ast["left"], environment)
+        right_value, _ = evaluate(ast["right"], environment)
         return left_value < right_value, False
-    if ast['tag'] == ">":
-        left_value, _ = evaluate(ast['left'], environment)
-        right_value, _ = evaluate(ast['right'], environment)
+    if ast["tag"] == ">":
+        left_value, _ = evaluate(ast["left"], environment)
+        right_value, _ = evaluate(ast["right"], environment)
         return left_value > right_value, False
-    if ast['tag'] == ">=":
-        left_value, _ = evaluate(ast['left'], environment)
-        right_value, _ = evaluate(ast['right'], environment)
-        return left_value >= right_value, False
-    if ast['tag'] == "<=":
-        left_value, _ = evaluate(ast['left'], environment)
-        right_value, _ = evaluate(ast['right'], environment)
+    if ast["tag"] == "<=":
+        left_value, _ = evaluate(ast["left"], environment)
+        right_value, _ = evaluate(ast["right"], environment)
         return left_value <= right_value, False
-    if ast['tag'] == "==":
-        left_value, _ = evaluate(ast['left'], environment)
-        right_value, _ = evaluate(ast['right'], environment)
+    if ast["tag"] == ">=":
+        left_value, _ = evaluate(ast["left"], environment)
+        right_value, _ = evaluate(ast["right"], environment)
+        return left_value >= right_value, False
+    if ast["tag"] == "==":
+        left_value, _ = evaluate(ast["left"], environment)
+        right_value, _ = evaluate(ast["right"], environment)
         return left_value == right_value, False
-    if ast['tag'] == "!=":
-        left_value, _ = evaluate(ast['left'], environment)
-        right_value, _ = evaluate(ast['right'], environment)
+    if ast["tag"] == "!=":
+        left_value, _ = evaluate(ast["left"], environment)
+        right_value, _ = evaluate(ast["right"], environment)
         return left_value != right_value, False
-    if ast['tag'] == "print":
+    if ast["tag"] == "print":
         if ast["value"]:
             value, _ = evaluate(ast["value"], environment)
             print(value)
-        else: 
-            print
+        else:
+            print()
         return None, False
-    if ast['tag'] == "negate":
-        value, _ = evaluate(ast['value'], environment)
-        return -value, False
-    if ast['tag'] == "!":
-        value, _ = evaluate(ast['value'], environment)
-        return not value, False
-    assert False, "Unknown Operator in AST"
+    assert False, "Unknown operator in AST"
 
 #helper function ---------------------------------------------------
 def equals(code, environment, expected_result, expected_environment=None):
@@ -99,11 +100,14 @@ def test_evaluate_single_value():
     equals("4", {}, 4, {})
     equals("4.2", {}, 4.2, {})
     equals("3", {}, 3, {})
+    #equals("x", {}, 1, {})
+    #equals("Y", {}, 2, {})
 
 def test_evaluate_addition():
     print("\033[38;5;200m--test evaluate addition--\033[0m")
     equals("1+1", {}, 2, {})
     equals("1.2+2.3+3.4", {}, 6.9, {})
+
 
 def test_evaluate_subtraction():
     print("\033[38;5;200m--test evaluate subtraction--\033[0m")

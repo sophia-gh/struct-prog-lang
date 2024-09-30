@@ -41,15 +41,15 @@ def tokenize(characters):
     tokens = []
     position = 0
     while position < len(characters):
-        for pattern, tag in patterns: 
-            match = pattern.match(characters, position) #if reg expression matches characters starting at position, match = true
+        for pattern, tag in patterns:
+            match = pattern.match(characters, position)
             if match:
                 break
-        assert match, f"did not find match for {characters[position:]}"
+        assert match, f"Did not find a match for {characters[position:]}"
         token = {
-            'tag':tag,
-            'value': match.group(0), #tokens can sometimes match multiple times, go with smallest group
-            'position': position, #important to see where the error is
+            "tag": tag,
+            "value": match.group(0),
+            "position": position,
         }
         tokens.append(token)
         position = match.end()
@@ -60,10 +60,10 @@ def tokenize(characters):
             else:
                 token["value"] = int(token["value"])
     token = {
-        "tag" : None, 
-        "value": None, 
-        "position": None
-    }
+            "tag": None,
+            "value": None,
+            "position": position,
+        }
     tokens.append(token)
     return tokens
 

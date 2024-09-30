@@ -24,17 +24,19 @@ from pprint import pprint
 
 def parse_simple_expression(tokens):
     """
-    simple_expression = number | "("expression")" | "-" simple_expression
+    simple_expression = number | identifier | "(" expression ")" | "-" simple_expression
     """
     if tokens[0]["tag"] == "number":
         return tokens[0], tokens[1:]
+    if tokens[0]["tag"] == "identifier":
+        return tokens[0], tokens[1:]
     if tokens[0]["tag"] == "(":
-        node, tokens = parse_arithmetic_expression(tokens[1:])
+        node, tokens = parse_expression(tokens[1:])
         assert tokens[0]["tag"] == ")", "Error: expected ')'"
         return node, tokens[1:]
     if tokens[0]["tag"] == "-":
         node, tokens = parse_simple_expression(tokens[1:])
-        node = {"tag": "negate", "value": node}
+        node = {"tag":"negate", "value":node}
         return node, tokens
 
 
@@ -53,7 +55,7 @@ def parse_term(tokens):
     term = factor { "*"|"/" factor }
     """
     node, tokens = parse_factor(tokens)
-    while tokens[0]["tag"] in ["*","/",]:  # does not attempt to run when tokens is empty
+    while tokens[0]["tag"] in ["*", "/"]:
         tag = tokens[0]["tag"]
         right_node, tokens = parse_factor(tokens[1:])
         node = {"tag": tag, "left": node, "right": right_node}
@@ -119,12 +121,12 @@ def parse_print_statement(tokens):
     tokens = tokens[2:]
     if tokens[0]["tag"] != ")":
         expression, tokens = parse_expression(tokens)
-    else: 
+    else:
         expression = None
     assert tokens[0]["tag"] == ")"
     node = {
         "tag":"print",
-        "value":expression
+        "value":expression,
     }
     return node, tokens[1:]
 
@@ -146,11 +148,11 @@ def parse_statement(tokens):
     """
     if tokens[0]["tag"] == "print":
         return parse_print_statement(tokens) 
-    return parse_assignment_statement(tokens)
+    return parse_assignment_statement(tokens) 
 
 def parse(tokens):
     ast, tokens = parse_statement(tokens)
-    return ast
+    return ast 
 
 # test functions ---------------------------------------------------------------------------------------------------
 def test_parse_simple_expression():
