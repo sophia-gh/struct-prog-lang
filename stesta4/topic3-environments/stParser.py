@@ -16,6 +16,7 @@ Accept a string of tokens, return an AST expressed as stack of dictionaries
     assignment_statement = expression
     statement = print_statement |
                 assignment_expression
+    statement_list = statement {";" statement } {";"}
 """
 
 from stTokenizer import tokenize

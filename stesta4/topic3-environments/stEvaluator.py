@@ -100,7 +100,7 @@ def test_evaluate_single_value():
     equals("4", {}, 4, {})
     equals("4.2", {}, 4.2, {})
     equals("3", {}, 3, {})
-    #equals("x", {}, 1, {})
+    equals("x", {}, 1, {})
     #equals("Y", {}, 2, {})
 
 def test_evaluate_addition():
