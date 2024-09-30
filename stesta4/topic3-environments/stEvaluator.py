@@ -73,6 +73,11 @@ def evaluate(ast, environment):
         else:
             print()
         return None, False
+    if ast["tag"] == "list":
+        assert "statement" in ast
+        value, _ = evaluate(ast['statement'], environment)
+        ast = ast["list"]
+        return None, False
     assert False, "Unknown operator in AST"
 
 #helper function ---------------------------------------------------

@@ -151,8 +151,48 @@ def parse_statement(tokens):
         return parse_print_statement(tokens) 
     return parse_assignment_statement(tokens) 
 
-def parse(tokens):
+def parse_statement_list(tokens):
     ast, tokens = parse_statement(tokens)
+    if tokens[0]["tag"] == ";":
+        return ast, tokens
+    current_ast = {
+        'tag': 'list',
+        'statement': ast,
+        'next':  None
+    }
+    top_ast = current_ast
+    while tokens[0]['tag'] == ';':
+        tokens = tokens[1:]
+        ast, tokens = parse_statement(tokens)
+        current_ast['list'] = {
+            'tag': 'list',
+            'statement': ast,
+            'next':  None
+        }
+        current_ast = current_ast['list']
+        return top_ast, tokens
+      
+    
+def test_parse_statement_list():
+    print(f"\033[38;5;43m{"testing parse statement list "}\033[0m")
+    tokens = tokenize("4+5")
+    assert parse_statement_list(tokens) == parse_statement(tokens)
+    tokens = tokenize("4+5;3-2")
+    assert parse_statement_list(tokens) == parse_statement(tokens)
+    tokens = tokenize("4;5")
+    ast, tokens = parse_statement_list(tokens)
+    print(ast)
+
+def parse_program(tokens):
+    return parse_statement_list(tokens)
+
+def test_parse_program():
+    print(f"\033[38;5;43m{"testing parse program"}\033[0m")
+    tokens = tokenize("2+3+4/6")
+    assert parse_program(tokens) == parse_statement_list(tokens)
+
+def parse(tokens):
+    ast, tokens = parse_program(tokens)
     return ast 
 
 # test functions ---------------------------------------------------------------------------------------------------
@@ -409,6 +449,8 @@ if __name__ == "__main__":
     test_parse_print_statement()
     test_parse_assignment_statement()
     test_parse_statement()
+    test_parse_statement_list()
+    test_parse_program()
     test_parse()
     print(f"\033[38;5;117m{"done."}\033[0m")
 
