@@ -6,35 +6,38 @@ from stEvaluator import evaluate
 from pprint import pprint
 
 def main():
-    #check for command line arguments
+    # check for arguments
     if len(sys.argv) > 1:
-        #open file
-        with open(sys.argv[1], 'r') as f:
+        # open the file
+        with open(sys.argv[1],'r') as f:
             source_code = f.read()
+        environment = {}
         tokens = tokenize(source_code)
         ast = parse(tokens)
-        evaluate(ast)
+        evaluate(ast, environment)
         exit()
-    #repl loop
+    # REPL Loop
     debug = False
-    environment = {} 
+    environment = {}
     while True:
         try:
-            #read input
+            # read input
             source_code = input(">> ")
-            if source_code.strip() in ["exit", "quit"]:
+            if source_code.strip() in ["exit","quit"]:
                 break
             if source_code.strip() in ["debug"]:
-                print([debug])
                 debug = not debug
+                if debug:
+                    print("debugger is on.")
+                    pprint(environment)
+                else:
+                    print("debugger is off.")
+                continue
             tokens = tokenize(source_code)
             ast = parse(tokens)
             evaluate(ast, environment)
-            if debug: 
-                print("debugger is on.")
+            if debug:
                 pprint(environment)
-            else: 
-                print("debugger is off.")
         except Exception as e:
             print(f"Error: {e}")
 

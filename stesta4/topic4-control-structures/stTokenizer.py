@@ -30,6 +30,8 @@ patterns = [
     ["[A-Za-z_][A-Za-z0-9_]*","identifier"],
     ["\\&\\&", "&&"],
     ["\\|\\|", "||"],
+    ["\\{", "{"],
+    ["\\}", "}"],
     ["!", "!"],
     ["[ \t\n]+", "whitespace"],
 ]
@@ -81,7 +83,7 @@ def test_simple_tokens():
         assert tokens[0]["tag"] == char
         assert tokens[0]["value"] == char
         assert tokens[0]["position"] == i
-    for characters in ["(",")","+", "-", "*", "/", "==","!=","<",">","<=", ">=","=","||","&&","!","print"]:
+    for characters in ["(",")","+", "-", "*", "/", "==","!=","<",">","<=", ">=","=","||","&&","!","print", "{", "}"]:
         tokens = tokenize(characters)
         assert (
             tokens[0]["tag"] == characters
