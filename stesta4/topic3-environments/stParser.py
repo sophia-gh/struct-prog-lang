@@ -174,33 +174,12 @@ def parse_statement_list(tokens):
         }
         current_ast = current_ast['list']
     return top_ast, tokens
-      
-    
-def test_parse_statement_list():
-    """
-    statement_list = statement { ";" statement } {";"}
-    """
-    print("test parse_statement_list")
-    tokens = tokenize("4+5")
-    assert parse_statement_list(tokens) == parse_statement(tokens)
-    tokens = tokenize("print(4);print(5)")
-    ast, tokens = parse_statement_list(tokens)
-    print(ast)
-    
-
+ 
 def parse_program(tokens):
     """
     program = statement_list
     """
     return parse_statement_list(tokens)
-
-def test_parse_program():
-    """
-    program = statement_list
-    """
-    print("test parse_program")
-    tokens = tokenize("2+3*4+5")
-    assert parse_program(tokens) == parse_statement_list(tokens)
 
 def parse(tokens):
     ast, tokens = parse_program(tokens)
@@ -371,7 +350,7 @@ def test_parse_boolean_expression():
     }
 
 def test_parse_expression():
-    print("testing parse expression")
+    print(f"\033[38;5;43m{"testing parse expression"}\033[0m")
     tokens = tokenize("4>2+3||4&&5")
     ast1, _ = parse_expression(tokens)
     ast2, _ = parse_boolean_expression(tokens)
@@ -395,7 +374,7 @@ def test_parse_assignment_statement():
     """
     assignment_statement = expression
     """
-    print("testing parse assignment statement")
+    print(f"\033[38;5;43m{"testing parse assignment statement"}\033[0m")
     tokens = tokenize("2+3*4+5")
     ast1, _ = parse_expression(tokens)
     ast2, _ = parse_assignment_statement(tokens)
@@ -409,9 +388,34 @@ def test_parse_assignment_statement():
     }
 
 def test_parse_statement():
-    print("testing parse statement")
+    print(f"\033[38;5;43m{"testing parse statement"}\033[0m")
     tokens = tokenize("2+3*4+5")
     assert parse_statement(tokens) == parse_expression(tokens)
+
+def test_parse_statement_list():
+    """
+    statement_list = statement { ";" statement } {";"}
+    """
+    print(f"\033[38;5;43m{"testing parse statement list"}\033[0m")
+    tokens = tokenize("4+5")
+    assert parse_statement_list(tokens) == parse_statement(tokens)
+    tokens = tokenize("print(4);print(5)")
+    ast, tokens = parse_statement_list(tokens)
+    assert ast == {'list': {'list': None,
+                            'statement': {'tag': 'print',
+                                          'value': {'position': 15, 'tag': 'number', 'value': 5}},
+                             'tag': 'list'},
+                   'statement': {'tag': 'print',
+                                 'value': {'position': 6, 'tag': 'number', 'value': 4}},
+                   'tag': 'list'}            
+
+def test_parse_program():
+    """
+    program = statement_list
+    """
+    print(f"\033[38;5;43m{"testing parse program"}\033[0m")
+    tokens = tokenize("2+3*4+5")
+    assert parse_program(tokens) == parse_statement_list(tokens)
 
 def test_parse():
     print(f"\033[38;5;43m{"testing parse"}\033[0m")
