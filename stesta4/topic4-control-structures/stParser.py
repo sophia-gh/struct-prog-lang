@@ -17,9 +17,10 @@ Accept a string of tokens, return an AST expressed as stack of dictionaries
     assignment_statement = expression
     statement = print_statement |
                 if_statement |
-                "{" statement_list "}"
+                "{" statement_list "}"   
                 assignment_expression
     statement_list = statement {";" statement } {";"}
+    program = statement_list 
 """
 
 from stTokenizer import tokenize
@@ -145,6 +146,48 @@ def parse_assignment_statement(tokens):
         node = {"tag": tag, "target": node, "value": value}
     return node, tokens
 
+def parse_if_statement(tokens):
+    """
+    if_statement = "if" "(" boolean_expression ")" statement { "else" statement }
+    """
+    assert tokens[0]['tag'] == "if"
+    tokens = tokens[1:]
+    assert tokens[0]['tag'] == "("
+    tokens = tokens[1:]
+    condition, tokens = parse_expression(tokens)
+    assert tokens[0]['tag'] == ")"
+    tokens = tokens[1:]
+    then_statement, tokens = parse_statement(tokens)
+    node = {"tag": "if", "condition":condition, "then": then_statement}
+    if tokens[0]["tag"] == "else":
+        tokens = tokens[1:]
+        else_statement, tokens = parse_statement(tokens)
+        node["else"] = else_statement
+    return node, tokens
+
+
+def test_parse_if_statement():
+    """
+    if_statement = "if" "(" boolean_expression ")" statement { "else" statement }
+    """
+    ast, tokens = parse_if_statement(tokenize("if(1)print(2)"))
+    assert ast == {
+        'condition': {'position': 3, 'tag': 'number', 'value': 1},
+        'tag': 'if',
+        'then': {'tag': 'print',
+                 'value': {'position': 11, 'tag': 'number', 'value': 2}}
+    }
+    ast, tokens = parse_if_statement(tokenize("if(1)print(2)elseprint(3)"))
+    assert ast == {
+        'condition': {'position': 3, 'tag': 'number', 'value': 1},
+        'else': {'tag': 'print',
+                 'value': {'position': 23, 'tag': 'number', 'value': 3}},
+        'tag': 'if',
+        'then': {'tag': 'print',
+                 'value': {'position': 11, 'tag': 'number', 'value': 2}}
+    }
+    
+
 def parse_statement(tokens):
     """
     statement = print_statement |
@@ -152,14 +195,13 @@ def parse_statement(tokens):
                 "{" statement "}" |
                 assignment_statement
     """
-
     if tokens[0]["tag"] == "print":
         return parse_print_statement(tokens) 
     if tokens[0]["tag"] == "{":
         ast, tokens = parse_statement_list(tokens[1:])
         assert tokens[0]["tag"] == "}"
         return ast, tokens[1:]
-    return parse_assignment_statement(tokens)
+    return parse_assignment_statement(tokens)  
 
 def parse_statement_list(tokens):
     """
@@ -492,6 +534,7 @@ if __name__ == "__main__":
     test_parse_boolean_expression()
     test_parse_expression()
     test_parse_print_statement()
+    test_parse_if_statement()
     test_parse_assignment_statement()
     test_parse_statement()
     test_parse_statement_list()
