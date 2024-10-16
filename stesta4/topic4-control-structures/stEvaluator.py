@@ -75,11 +75,15 @@ def evaluate(ast, environment):
         condition, _ = evaluate(ast['condition'], environment)
         if condition:
             value, _ = evaluate(ast["then"], environment)
-            return value, False
         if "else" in ast:
             value, _ = evaluate(ast["else"], environment)
-            return value, False
-        return False, False
+        return None, False
+    if ast["tag"] == "while":
+        condition, _ = evaluate(ast['condition'], environment)
+        while condition:
+            _, _ = evaluate(ast["do"], environment)
+            condition, _ = evaluate(ast['condition'], environment)
+            return None, False
     if ast["tag"] == "=":
         assert 'target' in ast
         target = ast['target']
@@ -93,7 +97,7 @@ def evaluate(ast, environment):
             assert "statement" in ast
             value, return_chain = evaluate(ast["statement"], environment)
             ast = ast["list"]
-        return value, return_chain
+        return None, return_chain
     assert False, "Unknown operator in AST"
 
 #helper function ---------------------------------------------------
@@ -163,6 +167,15 @@ def test_evaluate_print_statement():
 
 def test_evaluate_if_statement():
     print("\033[38;5;200mtest if statement\033[0m")
+    equals("if(1) 3", {}, None, {})
+    equals("if(0) 3", {}, None, {})
+    equals("if(1) x=1", {"x":0}, None, {"x":1})
+    equals("if(0) x=1", {"x":0}, None, {"x":0})
+    equals("if(0) 3 else 2", {}, None, {})
+    equals("if(0){4;5;6;} else{3;2;1}", {}, None, {})
+
+def test_evaluate_while_statement():
+    print("\033[38;5;200mtest while statement\033[0m")
     equals("if(1) 3", {}, 3, {})
     equals("if(0) 3", {}, False, {})
     equals("if(0) 3 else 2", {}, 2, {})

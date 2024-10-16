@@ -14,9 +14,11 @@ Accept a string of tokens, return an AST expressed as stack of dictionaries
     expression = boolean_expression
     print_statement = "print" "(" expression ")"
     if_statement = "if" "(" boolean_expression ")" statement { "else" statement }
+    while_statement = "while" "(" boolean_expression ")" statement 
     assignment_statement = expression
     statement = print_statement |
                 if_statement |
+                while_statement|
                 "{" statement_list "}"   
                 assignment_expression
     statement_list = statement {";" statement } {";"}
@@ -186,12 +188,35 @@ def test_parse_if_statement():
         'then': {'tag': 'print',
                  'value': {'position': 11, 'tag': 'number', 'value': 2}}
     }
+
+def parse_while_statement(tokens):
+    assert tokens[0]['tag'] == "while"
+    tokens = tokens[1:]
+    assert tokens[0]['tag'] == "("
+    tokens = tokens[1:]
+    condition, tokens = parse_expression(tokens)
+    assert tokens[0]['tag'] == ")"
+    tokens = tokens[1:]
+    do_statement, tokens = parse_statement(tokens)
+    node = {"tag": "while", "condition":condition, "do": do_statement}
+    return node, tokens
+
+
+def test_parse_while_statement():
+    """
+    if_statement = "if" "(" boolean_expression ")" statement { "else" statement }
+    """
+    ast, tokens = parse_while_statement(tokenize("while(1)2"))
+    assert ast == {
+        'tag': 'while', 'condition': {'tag': 'number', 'value': 1, 'position': 6}, 'do': {'tag': 'number', 'value': 2, 'position': 8}
+    }
     
 
 def parse_statement(tokens):
     """
     statement = print_statement |
                 if_statement |
+                while_statement|
                 "{" statement "}" |
                 assignment_statement
     """
@@ -535,6 +560,7 @@ if __name__ == "__main__":
     test_parse_expression()
     test_parse_print_statement()
     test_parse_if_statement()
+    test_parse_while_statement()
     test_parse_assignment_statement()
     test_parse_statement()
     test_parse_statement_list()
