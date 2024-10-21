@@ -167,28 +167,6 @@ def parse_if_statement(tokens):
         node["else"] = else_statement
     return node, tokens
 
-
-def test_parse_if_statement():
-    """
-    if_statement = "if" "(" boolean_expression ")" statement { "else" statement }
-    """
-    ast, tokens = parse_if_statement(tokenize("if(1)print(2)"))
-    assert ast == {
-        'condition': {'position': 3, 'tag': 'number', 'value': 1},
-        'tag': 'if',
-        'then': {'tag': 'print',
-                 'value': {'position': 11, 'tag': 'number', 'value': 2}}
-    }
-    ast, tokens = parse_if_statement(tokenize("if(1)print(2)elseprint(3)"))
-    assert ast == {
-        'condition': {'position': 3, 'tag': 'number', 'value': 1},
-        'else': {'tag': 'print',
-                 'value': {'position': 23, 'tag': 'number', 'value': 3}},
-        'tag': 'if',
-        'then': {'tag': 'print',
-                 'value': {'position': 11, 'tag': 'number', 'value': 2}}
-    }
-
 def parse_while_statement(tokens):
     assert tokens[0]['tag'] == "while"
     tokens = tokens[1:]
@@ -200,17 +178,6 @@ def parse_while_statement(tokens):
     do_statement, tokens = parse_statement(tokens)
     node = {"tag": "while", "condition":condition, "do": do_statement}
     return node, tokens
-
-
-def test_parse_while_statement():
-    """
-    if_statement = "if" "(" boolean_expression ")" statement { "else" statement }
-    """
-    ast, tokens = parse_while_statement(tokenize("while(1)2"))
-    assert ast == {
-        'tag': 'while', 'condition': {'tag': 'number', 'value': 1, 'position': 6}, 'do': {'tag': 'number', 'value': 2, 'position': 8}
-    }
-    
 
 def parse_statement(tokens):
     """
@@ -487,6 +454,36 @@ def test_parse_statement():
         {'position': 8, 'tag': None, 'value': None}
     ]
 
+def test_parse_if_statement():
+    """
+    if_statement = "if" "(" boolean_expression ")" statement { "else" statement }
+    """
+    ast, tokens = parse_if_statement(tokenize("if(1)print(2)"))
+    assert ast == {
+        'condition': {'position': 3, 'tag': 'number', 'value': 1},
+        'tag': 'if',
+        'then': {'tag': 'print',
+                 'value': {'position': 11, 'tag': 'number', 'value': 2}}
+    }
+    ast, tokens = parse_if_statement(tokenize("if(1)print(2)elseprint(3)"))
+    assert ast == {
+        'condition': {'position': 3, 'tag': 'number', 'value': 1},
+        'else': {'tag': 'print',
+                 'value': {'position': 23, 'tag': 'number', 'value': 3}},
+        'tag': 'if',
+        'then': {'tag': 'print',
+                 'value': {'position': 11, 'tag': 'number', 'value': 2}}
+    }
+
+def test_parse_while_statement():
+    """
+    if_statement = "if" "(" boolean_expression ")" statement { "else" statement }
+    """
+    ast, tokens = parse_while_statement(tokenize("while(1)2"))
+    assert ast == {
+        'tag': 'while', 'condition': {'tag': 'number', 'value': 1, 'position': 6}, 'do': {'tag': 'number', 'value': 2, 'position': 8}
+    }
+    
 def test_parse_statement_list():
     """
     statement_list = statement { ";" statement } {";"}
