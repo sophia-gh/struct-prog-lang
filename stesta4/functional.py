@@ -2,6 +2,13 @@
 # ex (CAR '(1 2 3)) --> 1 returns first element of a list                "first"
 # (CDR '(1 2 3)) --> '(2 3) returns list of elements after first element "tail"
 
+# rules of functional programming: 
+# no access to global variables, yes access to reading global state, do not mutate external state, can return values to affect global state
+# use functions as first class variables 
+# no changing outside world from within the function 
+# break problem into smaller sub problems, rather than iteration 
+# suggestion: do not use local variables 
+
 def length(t):
     if t == [ ]:
         return 0
