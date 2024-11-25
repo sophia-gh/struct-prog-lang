@@ -649,4 +649,5 @@ if __name__ == "__main__":
     test_parse_statement_list()
     test_parse_program()
     test_parse()
+    print(parse(tokenize("1+2-(3+6)")))
     print("done")
